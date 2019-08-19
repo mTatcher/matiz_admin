@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>API test</title>
+</head>
+<body>
+    <textarea id="news-api-log" cols="100" rows="20"></textarea><br/>
+    <textarea id="news-api-input" cols="100" rows="8"></textarea><br/>
+    <input id="news-api-submit" type="button" value="Send"/>
+</body>
+<script>
+    const newsSocket = new WebSocket('ws://' + window.location.host);
+
+    newsSocket.onmessage = function (e) {
+        const data = JSON.stringify(JSON.parse(e.data), null, 2);
+        document.querySelector('#news-api-log').value = data;
+    };
+
+    newsSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#news-api-input').focus();
+
+    document.querySelector('#news-api-submit').onclick = function (e) {
+        const messageInputDom = document.querySelector('#news-api-input');
+        const message = messageInputDom.value;
+        newsSocket.send(JSON.stringify(message));
+    };
+</script>
+</html>
